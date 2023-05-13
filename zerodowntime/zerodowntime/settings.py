@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "zerodowntime.product",
+    "graphene_django",
+    "django_extensions",
 ]
 
 MIDDLEWARE = [
