@@ -1,0 +1,31 @@
+version: "3.4"
+
+services:
+  db:
+    image: library/postgres:13-alpine
+    container_name: zero-downtime-postgres
+    ports:
+      - 5432:5432
+    restart: unless-stopped
+    volumes:
+      - zero-downtime-db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=demo
+      - POSTGRES_PASSWORD=demo
+
+  pgadmin:
+      image: dpage/pgadmin4
+      container_name: zero-downtime-pgadmin
+      depends_on:
+        - db
+      ports:
+        - "5051:80"
+      environment:
+        PGADMIN_DEFAULT_EMAIL: pgadmin@example.com
+        PGADMIN_DEFAULT_PASSWORD: root
+      restart: always
+
+
+volumes:
+  zero-downtime-db:
+    driver: local
