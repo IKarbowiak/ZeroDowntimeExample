@@ -4,6 +4,7 @@ import graphene
 from graphql.error import GraphQLError
 
 from .product import models
+from .product.mutations import ProductCreate, ProductDelete
 from .product.types import Product
 
 
@@ -20,4 +21,9 @@ class Query(graphene.ObjectType):
         return models.Product.objects.filter(pk=id).first()
 
 
-schema = graphene.Schema(query=Query)
+class Mutation(graphene.ObjectType):
+    product_create = ProductCreate.Field()
+    product_delete = ProductDelete.Field()
+
+
+schema = graphene.Schema(query=Query, mutation=Mutation)
