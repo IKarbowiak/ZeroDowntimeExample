@@ -9,6 +9,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        # add a nullable `slug` field
         migrations.AddField(
             model_name="product",
             name="slug",
