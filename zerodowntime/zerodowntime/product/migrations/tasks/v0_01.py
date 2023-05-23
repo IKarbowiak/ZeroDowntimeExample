@@ -1,14 +1,15 @@
+from django.db.models import F
 from django.utils.text import slugify
 
 from ....celeryconf import app
 from ...models import Product
 
-# Results in memory usage of ~20MB, each update takes ~ 1s
-BATCH_SIZE = 1000
-
 
 @app.task
 def create_slugs_for_products_task():
+    # Results in memory usage of ~20MB, each update takes ~ 1s
+    BATCH_SIZE = 1000
+
     products = Product.objects.filter(slug__isnull=True).order_by("name")
     first_char = products.first().name[0].lower()
     products = products.filter(name__istartswith=first_char).order_by("name")
@@ -44,3 +45,20 @@ def generate_unique_slug(instance, slug_values):
         unique_slug = f"{slug}-{extension}"
 
     return unique_slug
+
+
+@app.task
+def set_product_created_at_value_task():
+    # Results in memory usage of ~20MB, each update takes < 1s
+    BATCH_SIZE = 5000
+
+    products = Product.objects.filter(created_at__isnull=True).order_by("pk")
+    ids = products.values_list("pk", flat=True)[:BATCH_SIZE]
+    products_qs = Product.objects.filter(pk__in=ids)
+    if ids:
+        set_product_created_at_value(products_qs)
+        set_product_created_at_value_task.delay()
+
+
+def set_product_created_at_value(products_qs):
+    products_qs.update(created_at=F("created"))
