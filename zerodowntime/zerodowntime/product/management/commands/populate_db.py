@@ -29,7 +29,7 @@ class Command(BaseCommand):
                 "the amount has been changed to that value."
             )
             amount = 1000000
-        start_pk = Product.objects.last().pk
+        start_pk = Product.objects.last().pk if Product.objects.exists() else 0
         Product.objects.bulk_create(
             [
                 Product(
