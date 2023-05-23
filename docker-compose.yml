@@ -25,7 +25,15 @@ services:
         PGADMIN_DEFAULT_PASSWORD: root
       restart: always
 
+  redis:
+    image: library/redis:5.0-alpine
+    ports:
+      - 6379:6379
+    volumes:
+      -  zero-downtime:/data
 
 volumes:
   zero-downtime-db:
+    driver: local
+  zero-downtime:
     driver: local
