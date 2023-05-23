@@ -6,7 +6,7 @@ class Product(models.Model):
     slug = models.SlugField(max_length=255, null=True, blank=True)
     description = models.JSONField(blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True, db_index=True)
-    created_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     class Meta:
         ordering = ("pk",)
