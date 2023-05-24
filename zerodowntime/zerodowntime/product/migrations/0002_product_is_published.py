@@ -12,4 +12,11 @@ class Migration(migrations.Migration):
             name="is_published",
             field=models.BooleanField(default=True),
         ),
+        migrations.RunSQL(
+            """
+                ALTER TABLE product_product
+                ALTER COLUMN is_published
+                SET DEFAULT true;
+            """
+        ),
     ]
