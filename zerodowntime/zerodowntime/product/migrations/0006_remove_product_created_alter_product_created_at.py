@@ -8,6 +8,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.SeparateDatabaseAndState(
+            # set the `created` column in DB as a nullable
             database_operations=[
                 migrations.AlterField(
                     model_name="product",
@@ -15,6 +16,7 @@ class Migration(migrations.Migration):
                     field=models.DateTimeField(blank=True, null=True),
                 ),
             ],
+            # remove the `created` field from the ORM
             state_operations=[
                 migrations.RemoveField(
                     model_name="product",
