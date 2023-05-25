@@ -7,6 +7,7 @@ from .tasks.v0_01 import set_product_created_at_value_task
 
 def set_created_at_value(apps, _schema_editor):
     def on_migrations_complete(sender=None, **kwargs):
+        # Run the asynchronous task for setting the value on the new field
         set_product_created_at_value_task.delay()
 
     sender = registry.get_app_config("product")

@@ -52,11 +52,20 @@ def set_product_created_at_value_task():
     # Results in memory usage of ~20MB, each update takes < 1s
     BATCH_SIZE = 5000
 
+    # take the products that has empty `created_at` value, order them by `pk`
     products = Product.objects.filter(created_at__isnull=True).order_by("pk")
+
+    # take the ids of the first 5000 objects
     ids = products.values_list("pk", flat=True)[:BATCH_SIZE]
+
+    # get the first 5000 objects, run one more db query to avoid using insufficient
+    # limit and offset SQL statement
     products_qs = Product.objects.filter(pk__in=ids)
     if ids:
+        # call the method for update the instances
         set_product_created_at_value(products_qs)
+
+        # run the task again to update the rest of istances
         set_product_created_at_value_task.delay()
 
 
