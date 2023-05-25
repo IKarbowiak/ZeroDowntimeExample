@@ -7,6 +7,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        # change the field into non-nullable
         migrations.AlterField(
             model_name="product",
             name="slug",
