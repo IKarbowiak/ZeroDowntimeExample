@@ -7,6 +7,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        # set the default value for new instances
+        # the new instances will get the current date time
         migrations.AlterField(
             model_name="product",
             name="created_at",
