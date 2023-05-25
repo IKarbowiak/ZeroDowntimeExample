@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.db.models import F
 from django.utils.text import slugify
 
@@ -65,9 +66,12 @@ def set_product_created_at_value_task():
         # call the method for update the instances
         set_product_created_at_value(products_qs)
 
-        # run the task again to update the rest of istances
+        # run the task again to update the rest of instances
         set_product_created_at_value_task.delay()
 
 
 def set_product_created_at_value(products_qs):
-    products_qs.update(created_at=F("created"))
+    with transaction.atomic():
+        # lock the batch of objects to avoid the deadlock
+        _products = list(products_qs.select_for_update(of=(["self"])))
+        products_qs.update(created_at=F("created"))
