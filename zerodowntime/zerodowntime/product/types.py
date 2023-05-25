@@ -9,6 +9,9 @@ class Product(ObjectType):
     created_at = graphene.DateTime(
         description="The date time when the product was created"
     )
+    is_published = graphene.Boolean(
+        description="Whether the product is published or not."
+    )
 
     class Meta:
         interfaces = [graphene.relay.Node]
