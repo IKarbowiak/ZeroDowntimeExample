@@ -12,7 +12,10 @@ def create_unique_slugs_for_products(apps, schema_editor):
 
 def create_slugs_for_products_task(product_model):
     products = product_model.objects.filter(slug__isnull=True).order_by("name")
-    first_char = products.first().name[0].lower()
+    product = products.first()
+    if not product:
+        return
+    first_char = product.name[0].lower()
     products = products.filter(name__istartswith=first_char).order_by("name")
     if products.exists():
         slugs = list(
@@ -31,7 +34,9 @@ def create_slugs_for_products(product_model, products, slugs):
     """Create unique slug for Product instances."""
     products_to_update = []
     for product in products:
-        generate_unique_slug(product, slugs)
+        slug = generate_unique_slug(product, slugs)
+        slugs.append(slug)
+        product.slug = slug
         products_to_update.append(product)
     product_model.objects.bulk_update(products_to_update, ["slug"])
 
