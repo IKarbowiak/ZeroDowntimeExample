@@ -17,18 +17,21 @@ class ProductCreate(graphene.Mutation):
         description = graphene.JSONString(
             description="The description of the product.", required=False
         )
+        is_published = graphene.Boolean(
+            description="Whether the product is published or not."
+        )
 
     class Meta:
         description = "Create a product"
 
     @classmethod
-    def mutate(cls, root, info, name, slug, description):
+    def mutate(cls, root, info, name, slug, description, is_published):
         if not name.strip():
             raise ValidationError("You need to provide a value for the `name` field.")
         if not slug:
             slug = generate_unique_slug(name)
         product = models.Product.objects.create(
-            name=name, slug=slug, description=description
+            name=name, slug=slug, description=description, is_published=is_published
         )
         return cls(product)
 
