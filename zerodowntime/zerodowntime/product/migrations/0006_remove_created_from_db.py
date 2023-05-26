@@ -3,7 +3,7 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("product", "0006_remove_product_created_alter_product_created_at"),
+        ("product", "0005_remove_product_created_alter_product_created_at"),
     ]
 
     operations = [
