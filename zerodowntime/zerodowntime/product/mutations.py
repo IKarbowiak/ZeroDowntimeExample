@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 
 from . import models
 from .types import Product
+from .utils import generate_unique_slug
 
 
 class ProductCreate(graphene.Mutation):
@@ -12,16 +13,23 @@ class ProductCreate(graphene.Mutation):
 
     class Arguments:
         name = graphene.String(description="The name of the product")
-        description = graphene.JSONString(description="The description of the product.")
+        slug = graphene.String(description="The slug of the product.", required=False)
+        description = graphene.JSONString(
+            description="The description of the product.", required=False
+        )
 
     class Meta:
         description = "Create a product"
 
     @classmethod
-    def mutate(cls, root, info, name, description):
+    def mutate(cls, root, info, name, slug, description):
         if not name.strip():
             raise ValidationError("You need to provide a value for the `name` field.")
-        product = models.Product.objects.create(name=name, description=description)
+        if not slug:
+            slug = generate_unique_slug(name)
+        product = models.Product.objects.create(
+            name=name, slug=slug, description=description
+        )
         return cls(product)
 
 
