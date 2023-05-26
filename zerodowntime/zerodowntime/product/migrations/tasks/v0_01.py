@@ -1,14 +1,16 @@
+from django.db import transaction
+from django.db.models import F
 from django.utils.text import slugify
 
 from ....celeryconf import app
 from ...models import Product
 
-# Results in memory usage of ~20MB, each update takes ~ 1s
-BATCH_SIZE = 1000
-
 
 @app.task
 def create_slugs_for_products_task():
+    # Results in memory usage of ~20MB, each update takes ~ 1s
+    BATCH_SIZE = 1000
+
     products = Product.objects.filter(slug__isnull=True).order_by("name")
     product = products.first()
     if not product:
@@ -49,3 +51,32 @@ def generate_unique_slug(instance, slug_values):
         unique_slug = f"{slug}-{extension}"
 
     return unique_slug
+
+
+@app.task
+def set_product_created_at_value_task():
+    # Results in memory usage of ~20MB, each update takes < 1s
+    BATCH_SIZE = 5000
+
+    # take the products that has empty `created_at` value, order them by `pk`
+    products = Product.objects.filter(created_at__isnull=True).order_by("pk")
+
+    # take the ids of the first 5000 objects
+    ids = products.values_list("pk", flat=True)[:BATCH_SIZE]
+
+    # get the first 5000 objects, run one more db query to avoid using insufficient
+    # limit and offset SQL statement
+    products_qs = Product.objects.filter(pk__in=ids)
+    if ids:
+        # call the method for update the instances
+        set_product_created_at_value(products_qs)
+
+        # run the task again to update the rest of instances
+        set_product_created_at_value_task.delay()
+
+
+def set_product_created_at_value(products_qs):
+    with transaction.atomic():
+        # lock the batch of objects to avoid the deadlock
+        _products = list(products_qs.select_for_update(of=(["self"])))
+        products_qs.update(created_at=F("created"))
