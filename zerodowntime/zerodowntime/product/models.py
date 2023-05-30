@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Index
 
 
 class Product(models.Model):
@@ -10,6 +11,12 @@ class Product(models.Model):
 
     class Meta:
         ordering = ("pk",)
+        indexes = [
+            Index(
+                name="product_index",
+                fields=["name", "slug"],
+            ),
+        ]
 
     def __str__(self) -> str:
         return self.name
