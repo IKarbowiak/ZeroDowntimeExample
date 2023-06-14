@@ -50,7 +50,7 @@ def generate_unique_slug(instance, slug_values):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("product", "0002_product_slug"),
+        ("product", "0002_add_product_slug"),
     ]
 
     operations = [
