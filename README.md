@@ -30,7 +30,10 @@ $ docker-compose up
 ```
 
 4. Populate db
+You can populate the DB with sample products data with the use of `populate_db` command.
+Use `--amount` argument to specify number of instances to create:
 ```
+$ python manage.py populate_db --amount=1000
 ```
 
 5. Start the celery worker
@@ -45,13 +48,12 @@ Then add `db` service from port `5432`, `username` and `password` are: `demo`.
 
 ## Project structure
 Tags:
-- `v0.1.0` - the initial state, this is the starting point
-- `v0.1.1` - contains changes that ensure the zero-downtime approach when switching to version v0.2
-- `v0.2` - the version v0.2 of the system with applied intended model changes
-- `v0.3` - contains the final stage with all required operations 
+- `0.1.0` - the initial state, this is the starting point
+- `0.1.1` - contains changes that ensure the zero-downtime approach when switching to version v0.2
+- `0.2` - the version v0.2 of the system with applied intended model changes
+- `0.3` - contains the final stage with all required operations
 
 Branches:
-- `v0.1` - corresponds to version v0.1
-- `v0.2` - corresponds to version v0.2
-- `v0.3` - corresponds to version v0.3
-
+- `0.1` - corresponds to version v0.1
+- `0.2` - corresponds to version v0.2
+- `0.3` - corresponds to version v0.3
