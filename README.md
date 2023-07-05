@@ -29,14 +29,19 @@ $ pip install requirements.txt
 $ docker-compose up
 ```
 
-4. Populate db
+4. Run the database migrations
+```
+$ python manage.py migrate
+```
+
+5. Populate db
 You can populate the DB with sample products data with the use of `populate_db` command.
 Use `--amount` argument to specify number of instances to create:
 ```
 $ python manage.py populate_db --amount=1000
 ```
 
-5. Start the celery worker
+6. Start the celery worker
 ```
 $ python -m celery -A zerodowntime worker -B -l info
 ```
